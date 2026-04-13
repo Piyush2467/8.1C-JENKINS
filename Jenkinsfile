@@ -3,45 +3,45 @@ pipeline {
 
     stages {
 
-        stage('1. Code Checkout') {
+        stage('Checkout') {
             steps {
-                echo 'Checking out code from GitHub...'
+                git 'https://github.com/Piyush2467/8.1C-JENKINS.git'
             }
         }
 
-        stage('2. Build') {
+        stage('Install Dependencies') {
             steps {
-                echo 'Building the application...'
+                sh 'npm install || true'
             }
         }
 
-        stage('3. Test') {
+        stage('Run Tests') {
             steps {
-                echo 'Running tests...'
+                sh 'echo "Running tests..."'
             }
         }
 
-        stage('4. Static Code Analysis') {
+        stage('NPM Audit') {
             steps {
-                echo 'Performing static code analysis...'
+                sh 'npm audit || true'
             }
         }
 
-        stage('5. Security Scan') {
+        stage('SonarCloud Analysis') {
             steps {
-                echo 'Running security scan...'
-            }
-        }
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                    curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+                    unzip sonar-scanner.zip
+                    export PATH=$PATH:$(pwd)/sonar-scanner-5.0.1.3006-linux/bin
 
-        stage('6. Deploy') {
-            steps {
-                echo 'Deploying application...'
-            }
-        }
-
-        stage('7. Monitor') {
-            steps {
-                echo 'Monitoring application...'
+                    sonar-scanner \
+                      -Dsonar.projectKey=Piyush2467_8.1C-JENKINS \
+                      -Dsonar.organization=piyush2467 \
+                      -Dsonar.sources=. \
+                      -Dsonar.login=$SONAR_TOKEN
+                    '''
+                }
             }
         }
     }
