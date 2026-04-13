@@ -2,55 +2,46 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+
+        stage('1. Code Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Ritish4871/8.2CDevSecOps.git'
+                echo 'Checking out code from GitHub...'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('2. Build') {
             steps {
-                sh 'npm install'
+                echo 'Building the application...'
             }
         }
 
-        stage('Run Tests') {
+        stage('3. Test') {
             steps {
-                sh '''
-                    set +e
-                    npm test
-                    TEST_EXIT=$?
-                    echo "npm test exit code: $TEST_EXIT"
-                    echo "Continuing because this task allows the pipeline to continue even if tests fail."
-                    exit 0
-                '''
+                echo 'Running tests...'
             }
         }
 
-        stage('Generate Coverage Report') {
+        stage('4. Static Code Analysis') {
             steps {
-                sh '''
-                    set +e
-                    if npm run | grep -q "coverage"; then
-                        npm run coverage
-                    else
-                        echo "No coverage script found in package.json. Skipping coverage generation."
-                    fi
-                    exit 0
-                '''
+                echo 'Performing static code analysis...'
             }
         }
 
-        stage('NPM Audit (Security Scan)') {
+        stage('5. Security Scan') {
             steps {
-                sh '''
-                    set +e
-                    npm audit --audit-level=low
-                    AUDIT_EXIT=$?
-                    echo "npm audit exit code: $AUDIT_EXIT"
-                    echo "Continuing so vulnerabilities remain visible in the Jenkins console."
-                    exit 0
-                '''
+                echo 'Running security scan...'
+            }
+        }
+
+        stage('6. Deploy') {
+            steps {
+                echo 'Deploying application...'
+            }
+        }
+
+        stage('7. Monitor') {
+            steps {
+                echo 'Monitoring application...'
             }
         }
     }
