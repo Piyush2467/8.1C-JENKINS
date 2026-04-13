@@ -5,7 +5,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/Piyush2467/8.1C-JENKINS.git'
+               echo 'Code already checked out from GitHub'
             }
         }
 
